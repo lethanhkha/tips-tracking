@@ -1,0 +1,1923 @@
+<!DOCTYPE html>
+<html lang="vi" class="h-full">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Massage Hồng Hà — Ghi chú tiền tip</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- SheetJS for real .xlsx export -->
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" type="image/png" href="logo.png">
+    <style>
+        :root {
+            --ring: 0 0 0 3px rgba(59, 130, 246, .4);
+        }
+
+        .focus-ring:focus {
+            outline: none;
+            box-shadow: var(--ring);
+        }
+
+        .card {
+            border-radius: 1rem;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, .06);
+        }
+
+        .fade {
+            transition: all 220ms ease;
+        }
+
+        /* Logo cơ bản */
+        .site-logo {
+            height: 40px;
+            width: auto;
+            object-fit: contain;
+            transition: transform 0.2s ease-in-out;
+            border-radius: 50%;
+            margin-right: 8px;
+            flex-shrink: 0;
+        }
+
+        /* Hiệu ứng hover */
+        .site-logo:hover {
+            transform: scale(1.05);
+        }
+
+        /* Trên màn mobile nhỏ hơn 400px */
+        @media (max-width: 400px) {
+            .site-logo {
+                height: 32px;
+            }
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .card {
+                box-shadow: 0 8px 24px rgba(0, 0, 0, .35);
+            }
+        }
+
+        /* === Extra Responsive Tweaks for small phones (e.g., Samsung A15 logical width ~360-412px) === */
+        @media (max-width: 420px) {
+            header .px-4.py-3 {
+                padding-left: 12px;
+                padding-right: 12px;
+
+                /* Đưa Sắp xếp xuống dòng riêng */
+                .filters-row {
+                    flex-wrap: wrap;
+                }
+
+                #sort {
+                    flex: 1 1 100%;
+                    margin-top: 8px;
+                }
+            }
+
+            #search {
+                height: 56px;
+                font-size: 16px;
+            }
+
+            /* big tap target, avoid zoom on Android */
+            .card {
+                border-radius: 14px;
+            }
+
+            #summaryGrid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 10px;
+            }
+
+            #heatmap {
+                gap: 6px;
+            }
+
+            #heatmap .hm-cell {
+                padding: 10px 6px;
+            }
+
+            #heatmap .hm-day {
+                font-size: 11px;
+            }
+
+            #heatmap .hm-val {
+                font-size: 13px;
+            }
+
+            #entries .grid {
+                grid-template-columns: repeat(12, minmax(0, 1fr));
+            }
+
+            #entries .grid>div {
+                font-size: 13px;
+            }
+
+            #fab {
+                bottom: 16px;
+                right: 16px;
+            }
+
+            html,
+            body {
+                overflow-x: hidden;
+                width: 100%;
+            }
+        }
+
+
+        /* === Fix small-screen header + actions wrapping === */
+        @media (max-width: 420px) {
+            header .max-w-4xl.mx-auto.px-4.py-3 {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                align-items: flex-start;
+            }
+
+            header .max-w-4xl.mx-auto.px-4.py-3>.flex-1 {
+                min-width: 0;
+                flex: 1 1 100%;
+            }
+
+            #authArea {
+                order: 3;
+                width: 100%;
+                display: flex;
+                justify-content: flex-end;
+            }
+
+            #openSettings {
+                order: 2;
+            }
+
+            /* Search row already wide; ensure cards don't stick under header */
+            .sticky.top-0+section {
+                margin-top: 6px;
+            }
+
+            /* Action buttons wrap into two rows if needed */
+            .actions-wrap {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .actions-wrap>* {
+                flex: 1 1 auto;
+            }
+        }
+
+
+        /* === Mobile compact (e.g., Samsung A15 ~360–412px) === */
+        @media (max-width: 420px) {
+
+            /* Header compaction */
+            /* header .max-w-4xl.mx-auto.px-4.py-3 {
+                padding-left: 12px;
+                padding-right: 12px;
+                padding-top: 10px;
+                padding-bottom: 10px;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                align-items: flex-start;
+            } */
+
+            header .max-w-4xl.mx-auto.px-4.py-3 {
+                display: flex;
+                align-items: center;
+                flex-wrap: nowrap;
+                /* không xuống dòng */
+            }
+
+            header h1 {
+                font-size: 18px !important;
+                line-height: 1.2;
+            }
+
+            header p#subtitle {
+                font-size: 11px !important;
+            }
+
+            #openSettings {
+                order: 2;
+            }
+
+            #authArea {
+                order: 3;
+                width: 100%;
+                display: flex;
+                justify-content: flex-end;
+                gap: 8px;
+            }
+
+            #userPill {
+                padding: 6px 10px;
+            }
+
+            #userPill #userName {
+                display: none;
+            }
+
+            #userAvatar,
+            #userAvatarImg {
+                width: 22px;
+                height: 22px;
+                font-size: 10px;
+            }
+
+            /* Summary grid: 2 cols */
+            #summaryGrid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 10px;
+            }
+
+            /* Cards tighter */
+            .card {
+                border-radius: 14px;
+            }
+
+            .card.p-4 {
+                padding: 12px !important;
+            }
+
+            .card.p-5 {
+                padding: 14px !important;
+            }
+
+            /* Search row larger tap target */
+            #search {
+                height: 56px;
+                font-size: 16px;
+            }
+
+            /* Filters row */
+            .flex.gap-3.items-end.flex-1>div {
+                min-width: 0;
+            }
+
+            .flex.gap-3.items-end.flex-1 input,
+            .flex.gap-3.items-end.flex-1 select {
+                height: 44px;
+            }
+
+            /* Action buttons → 2 columns full width */
+            .actions-wrap {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+                width: 100%;
+            }
+
+            .actions-wrap>* {
+                width: 100%;
+                text-align: center;
+            }
+
+            /* Sparkline container spacing */
+            #sparkline {
+                height: 72px;
+            }
+
+            /* Revenue cards */
+            #heatmap {
+                gap: 6px;
+            }
+
+            #heatmap .hm-cell {
+                padding: 10px 6px;
+            }
+
+            #heatmap .hm-day {
+                font-size: 11px;
+            }
+
+            #heatmap .hm-val {
+                font-size: 13px;
+            }
+
+            /* Entries rows font tune */
+            #entries .grid>div {
+                font-size: 13px;
+            }
+
+            /* FAB position */
+            #fab {
+                bottom: 16px;
+                right: 16px;
+            }
+        }
+
+
+        /* Disable sticky header on very small screens to avoid content being covered */
+        @media (max-width: 420px) {
+            header.sticky.top-0 {
+                position: static !important;
+                top: auto !important;
+            }
+        }
+
+        /* === Mobile header: Settings + avatar on the same line, only avatar visible === */
+        @media (max-width: 420px) {
+
+            /* lock horizontal scroll */
+            html,
+            body {
+                overflow-x: hidden;
+                width: 100%;
+            }
+
+            /* keep the right group (settings + avatar) in one row */
+            #headerRight {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                flex-wrap: nowrap;
+            }
+
+            /* override previous mobile rules that pushed authArea to a new line */
+            #authArea {
+                order: 0 !important;
+                width: auto !important;
+                justify-content: flex-start !important;
+            }
+
+            /* hide the text name so only the avatar shows */
+            #userPill #userName {
+                display: none !important;
+            }
+
+            /* optional: hide Sign in/out button on very small screens */
+            #btnAuth {
+                display: none !important;
+            }
+
+            /* keep avatar compact */
+            #userAvatar,
+            #userAvatarImg {
+                width: 22px;
+                height: 22px;
+                font-size: 10px;
+                margin-right: 0;
+            }
+        }
+
+        /* Force 'Sắp xếp' to its own line on small screens */
+        @media (max-width: 420px) {
+            .filters-row {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+
+            .filters-row>div {
+                flex: 1 1 0;
+                min-width: 0;
+            }
+
+            /* Put the Sort block on a new line, full width */
+            .filters-row>div:last-child {
+                flex: 1 1 100%;
+            }
+
+            #sort {
+                width: 100%;
+            }
+        }
+
+
+        /* Mobile: đẹp hơn cho 2 ô ngày, mỗi ô chiếm ~1/2 hàng; 'Sắp xếp' xuống hàng riêng */
+        @media (max-width: 420px) {
+            .filters-row {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+
+            .filters-row>div {
+                flex: 1 1 calc(50% - 6px);
+                min-width: 0;
+            }
+
+            /* Từ ngày + Đến ngày */
+            .filters-row>div:last-child {
+                flex: 1 1 100%;
+            }
+
+            /* Sắp xếp */
+            .filters-row input[type="date"],
+            .filters-row select {
+                width: 100%;
+                height: 48px;
+                font-size: 16px;
+            }
+        }
+
+
+        /* Mobile: Heatmap chia 2 hàng (4 cột) */
+        @media (max-width: 420px) {
+            #heatmap {
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 8px;
+            }
+        }
+
+
+        /* Mobile: Heatmap 3-3-1 (CN full row) */
+        @media (max-width: 420px) {
+            #heatmap {
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 8px;
+            }
+
+            #heatmap .hm-sun {
+                grid-column: 1 / -1;
+            }
+        }
+    </style>
+
+    <!-- Supabase client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = "https://mxpxlvksrtcmpkkxzsfp.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cHhsdmtzcnRjbXBra3h6c2ZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ3MDY5NzUsImV4cCI6MjA3MDI4Mjk3NX0.5WDeB6rv55f49fXLayhmrvppRX6Ms313EN_7uijHECg";
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    </script>
+
+</head>
+
+<body class="h-full bg-zinc-50 text-zinc-900 dark:bg-zinc-900 dark:text-zinc-50">
+    <div class="max-w-4xl mx-auto px-4 pb-32">
+        <!-- Header -->
+        <header
+            class="sticky top-0 z-20 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-zinc-900/60 bg-white/90 dark:bg-zinc-900/90 border-b border-zinc-200 dark:border-zinc-800">
+            <div class="max-w-4xl mx-auto px-4 py-3 flex items-center gap-3">
+                <!-- <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600"></div> -->
+                <img src="logo.png" alt="Logo" class="site-logo">
+                <div class="flex-1">
+                    <h1 id="appTitle" class="text-lg sm:text-xl font-semibold">Ghi chú tiền tip</h1>
+                    <p id="subtitle" class="text-xs text-zinc-500 dark:text-zinc-400">
+                        Nhập hôm nay → tính cho <span class="font-medium" id="ruleWord">hôm sau</span>. Múi giờ:
+                        Asia/Ho_Chi_Minh
+                    </p>
+                </div>
+                <div id="headerRight" class="flex items-center gap-2">
+                    <button id="openSettings"
+                        class="px-3 py-2 text-sm rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 focus-ring fade">Cài
+                        đặt</button>
+                    <div id="authArea" class="flex items-center gap-2">
+                        <div id="userPill" class="hidden px-3 py-2 text-sm rounded-xl bg-zinc-100 dark:bg-zinc-800">
+                            <img id="userAvatarImg" class="hidden w-6 h-6 rounded-full mr-2" alt="avatar" />
+                            <span id="userAvatar"
+                                class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-indigo-600 text-white text-xs mr-2">U</span>
+                            <span id="userName" class="font-medium">—</span>
+                        </div>
+                        <button id="btnAuth"
+                            class="px-3 py-2 text-sm rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 focus-ring fade">Đăng
+                            nhập</button>
+                    </div> <!-- /#headerRight -->
+                </div>
+        </header>
+
+        <!-- Summary Cards -->
+        <section id="summaryGrid" class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
+            <div class="card p-4 bg-white dark:bg-zinc-800">
+                <p id="lblToday" class="text-xs text-zinc-500">Hôm nay</p>
+                <p id="sumToday" class="mt-1 text-xl font-semibold">0 VND</p>
+            </div>
+            <div class="card p-4 bg-white dark:bg-zinc-800">
+                <p id="lblTomorrow" class="text-xs text-zinc-500">Ngày mai</p>
+                <p id="sumTomorrow" class="mt-1 text-xl font-semibold">0 VND</p>
+            </div>
+            <div class="card p-4 bg-white dark:bg-zinc-800">
+                <p id="lblThisWeek" class="text-xs text-zinc-500">Tuần này</p>
+                <p id="sumWeek" class="mt-1 text-xl font-semibold">0 VND</p>
+            </div>
+            <div class="card p-4 bg-white dark:bg-zinc-800">
+                <p id="lblThisMonth" class="text-xs text-zinc-500">Tháng này</p>
+                <p id="sumMonth" class="mt-1 text-xl font-semibold">0 VND</p>
+            </div>
+        </section>
+
+        <!-- Filters & Actions -->
+        <!-- NEW: big search row -->
+        <section class="card bg-white dark:bg-zinc-800 mt-4 p-4">
+            <div class="mb-3">
+                <label id="lblSearch" class="text-xs text-zinc-500" for="search">Tìm kiếm</label>
+                <input id="search" placeholder="Ghi chú / khách hàng / nguồn…"
+                    class="mt-1 w-full px-4 h-12 rounded-xl bg-zinc-100 dark:bg-zinc-900 focus-ring" />
+            </div>
+            <div class="flex flex-col sm:flex-row gap-3 sm:items-end sm:justify-between">
+                <div class="flex gap-3 items-end flex-1 filters-row">
+                    <div>
+                        <label id="lblFrom" class="text-xs text-zinc-500" for="fromDate">Từ ngày</label>
+                        <input id="fromDate" type="date"
+                            class="mt-1 px-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-900 focus-ring" />
+                    </div>
+                    <div>
+                        <label id="lblTo" class="text-xs text-zinc-500" for="toDate">Đến ngày</label>
+                        <input id="toDate" type="date"
+                            class="mt-1 px-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-900 focus-ring" />
+                    </div>
+                    <div>
+                        <label id="lblSort" class="text-xs text-zinc-500" for="sort">Sắp xếp</label>
+                        <select id="sort" class="mt-1 px-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-900 focus-ring">
+                            <option id="optNewest" value="newest">Mới nhất</option>
+                            <option id="optOldest" value="oldest">Cũ nhất</option>
+                            <option id="optAmountDesc" value="amountDesc">Số tiền ↓</option>
+                            <option id="optAmountAsc" value="amountAsc">Số tiền ↑</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 actions-wrap">
+                    <!-- CHANGED: label to Excel -->
+                    <button id="btnSync"
+                        class="px-3 py-2 text-sm rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-900 dark:hover:bg-zinc-700 focus-ring">Đồng
+                        bộ</button>
+                    <button id="exportXLSX"
+                        class="px-3 py-2 text-sm rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-900 dark:hover:bg-zinc-700 focus-ring">Xuất
+                        Excel</button>
+                    <button id="exportJSON"
+                        class="px-3 py-2 text-sm rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-900 dark:hover:bg-zinc-700 focus-ring">Xuất
+                        JSON</button>
+                    <label
+                        class="px-3 py-2 text-sm rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-900 dark:hover:bg-zinc-700 focus-ring cursor-pointer">
+                        <span id="importJSONText">Nhập JSON</span>
+                        <input id="importJSON" type="file" accept="application/json" class="hidden" />
+                    </label>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sparkline -->
+        <section class="card bg-white dark:bg-zinc-800 mt-4 p-4">
+            <div class="flex items-center justify-between">
+                <p id="lblLast30" class="text-sm text-zinc-500">30 ngày gần đây</p>
+                <div class="text-xs text-zinc-500" id="sparkStats"></div>
+            </div>
+            <svg id="sparkline" viewBox="0 0 600 120" class="w-full h-24 mt-2"></svg>
+        </section>
+
+        <!-- NEW: Revenue Management (kept style) -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+            <div class="card bg-white dark:bg-zinc-800 p-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-semibold" id="lblMonthlyTarget">Mục tiêu tháng</h3>
+                    <button id="btnSetTarget"
+                        class="px-3 py-1.5 text-xs rounded-lg bg-zinc-100 dark:bg-zinc-900 focus-ring">Sửa</button>
+                </div>
+                <div class="mt-3">
+                    <div class="h-3 rounded-full bg-zinc-100 dark:bg-zinc-900 overflow-hidden">
+                        <div id="targetBar" class="h-full bg-indigo-600" style="width:0%"></div>
+                    </div>
+                    <div id="targetText" class="text-sm mt-2 text-zinc-600 dark:text-zinc-300">—</div>
+                    <div id="targetDelta" class="text-xs mt-1 text-zinc-500">—</div>
+                </div>
+            </div>
+            <div class="card bg-white dark:bg-zinc-800 p-4">
+                <h3 class="text-sm font-semibold" id="lblRecurring">Khách hàng quay lại</h3>
+                <ol id="recurringList" class="list-decimal pl-5 mt-2 space-y-1 text-sm"></ol>
+                <div class="text-xs text-zinc-500 mt-2" id="lblClientHint">Dựa trên trường “Khách hàng” trong biểu mẫu.
+                </div>
+            </div>
+            <div class="card bg-white dark:bg-zinc-800 p-4 md:col-span-2">
+                <h3 class="text-sm font-semibold" id="lblHeatmap">Chu kỳ theo thứ (Heatmap)</h3>
+                <div id="heatmap" class="grid grid-cols-7 gap-2 mt-2"></div>
+                <div class="text-xs text-zinc-500 mt-2" id="lblHeatmapHint">Tổng mỗi thứ, đậm hơn = nhiều hơn</div>
+            </div>
+        </section>
+
+        <!-- Entries -->
+        <section class="mt-4" id="entries"></section>
+
+        <!-- Floating Add Button -->
+        <button id="fab" title="Add Tip (N)"
+            class="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 px-5 py-4 rounded-2xl bg-indigo-600 text-white shadow-lg hover:bg-indigo-500 focus-ring fade">
+            + Thêm tip
+        </button>
+
+        <!-- Add/Edit Modal -->
+        <dialog id="entryDialog" class="rounded-2xl w-[95%] max-w-md bg-white dark:bg-zinc-900 p-0">
+            <form method="dialog" id="entryForm">
+                <div class="p-5 border-b border-zinc-200 dark:border-zinc-800">
+                    <h2 id="dialogTitle" class="text-lg font-semibold">Thêm tip</h2>
+                    <p class="text-xs text-zinc-500 mt-1">Quy tắc ngày: <span id="logicDesc" class="font-medium">Ghi cho
+                            ngày mai</span></p>
+                </div>
+                <div class="p-5 grid gap-4">
+                    <input type="hidden" id="entryId" />
+                    <div>
+                        <label id="lblAmount" class="text-xs text-zinc-500" for="amount">Số tiền (VND)</label>
+                        <div class="mt-1 flex gap-2">
+                            <input id="amount" inputmode="numeric" placeholder="0"
+                                class="w-full px-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 focus-ring" />
+                        </div>
+                        <div class="mt-2 flex gap-2">
+                            <button type="button" data-quick="50000"
+                                class="quick px-3 py-1.5 rounded-lg bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700">+50k</button>
+                            <button type="button" data-quick="100000"
+                                class="quick px-3 py-1.5 rounded-lg bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700">+100k</button>
+                            <button type="button" data-quick="200000"
+                                class="quick px-3 py-1.5 rounded-lg bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700">+200k</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label id="lblInputDate" class="text-xs text-zinc-500" for="inputDate">Ngày nhập (hôm
+                            nay)</label>
+                        <input id="inputDate" type="date"
+                            class="mt-1 w-full px-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 focus-ring" />
+                        <div class="mt-2 flex items-center justify-between">
+                            <div class="flex items-center gap-2 actions-wrap">
+                                <input id="recordTomorrow" type="checkbox" class="w-4 h-4" />
+                                <label id="lblRecordTomorrow" for="recordTomorrow" class="text-sm">Ghi cho ngày mai (mặc
+                                    định)</label>
+                            </div>
+                            <div class="text-xs text-zinc-500"><span id="lblIntendedLabel">Ngày tính:</span> <span
+                                    id="intendedPreview" class="font-medium">—</span></div>
+                        </div>
+                        <div class="mt-2">
+                            <label id="lblOverride" class="text-xs text-zinc-500" for="intendedDate">Chỉnh ngày tính
+                                (tuỳ chọn)</label>
+                            <input id="intendedDate" type="date"
+                                class="mt-1 w-full px-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 focus-ring" />
+                            <p id="lblOverrideDesc" class="text-[11px] text-zinc-500 mt-1">Mặc định: ngày tính = ngày
+                                nhập + 1 khi bật "Ghi cho ngày mai".</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label id="lblSource" class="text-xs text-zinc-500" for="source">Nguồn</label>
+                        <select id="source"
+                            class="mt-1 w-full px-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 focus-ring">
+                            <option value="walk-in">Khách vãng lai</option>
+                            <option value="regular">Khách quen</option>
+                            <option value="online">Online</option>
+                        </select>
+                    </div>
+
+                    <!-- NEW: Client field for recurring clients -->
+                    <div>
+                        <label id="lblClient" class="text-xs text-zinc-500" for="client">Khách hàng</label>
+                        <input id="client" placeholder="Tên khách (tuỳ chọn)"
+                            class="mt-1 w-full px-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 focus-ring" />
+                    </div>
+
+                    <div>
+                        <label id="lblNote" class="text-xs text-zinc-500" for="note">Ghi chú</label>
+                        <input id="note" placeholder="Khách / ca / ghi chú…"
+                            class="mt-1 w-full px-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 focus-ring" />
+                    </div>
+                </div>
+                <div class="p-4 flex justify-end gap-2 border-t border-zinc-200 dark:border-zinc-800">
+                    <button id="btnCancel" value="cancel"
+                        class="px-3 py-2 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700">Hủy</button>
+                    <button id="btnSave" value="default"
+                        class="px-4 py-2 rounded-xl bg-indigo-600 text-white hover:bg-indigo-500">Lưu</button>
+                </div>
+            </form>
+        </dialog>
+
+        <!-- Settings Modal -->
+        <dialog id="settingsDialog" class="rounded-2xl w-[95%] max-w-md bg-white dark:bg-zinc-900 p-0">
+            <div class="p-5 border-b border-zinc-200 dark:border-zinc-800">
+                <h2 id="settingsTitle" class="text-lg font-semibold">Cài đặt</h2>
+                <p id="settingsSubtitle" class="text-xs text-zinc-500 mt-1">Mặc định & Tiện ích</p>
+            </div>
+            <div class="p-5 grid gap-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p id="lblDefaultTomorrow" class="text-sm font-medium">Mặc định ghi cho ngày mai</p>
+                        <p id="descDefaultTomorrow" class="text-xs text-zinc-500">Khi thêm tip, ngày tính = ngày nhập +
+                            1.</p>
+                    </div>
+                    <label class="inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="defaultTomorrow" class="sr-only peer">
+                        <div
+                            class="w-11 h-6 bg-zinc-200 peer-focus:outline-none rounded-full peer peer-checked:bg-indigo-600 after:content-[''] after:absolute after:ml-[2px] after:mt-[2px] after:w-5 after:h-5 after:bg-white after:rounded-full after:transition-all peer-checked:after:translate-x-full relative">
+                        </div>
+                    </label>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p id="lblLanguage" class="text-sm font-medium">Ngôn ngữ</p>
+                    </div>
+                    <select id="languageSelect" class="px-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800">
+                        <option value="vi">Tiếng Việt</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+
+                <!-- NEW: Monthly target -->
+                <div class="">
+                    <p id="lblTargetSetting" class="text-sm font-medium">Mục tiêu tháng (VND)</p>
+                    <input id="targetInput" type="number"
+                        class="mt-2 w-full px-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 focus-ring"
+                        placeholder="vd: 20000000" />
+                </div>
+
+                <div>
+                    <p id="lblBackup" class="text-sm font-medium">Sao lưu</p>
+                    <div class="mt-2 flex gap-2">
+                        <button id="settingsExport"
+                            class="px-3 py-2 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700">Xuất
+                            JSON</button>
+                        <label
+                            class="px-3 py-2 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 cursor-pointer">
+                            <span id="settingsImportText">Nhập JSON</span>
+                            <input id="settingsImport" type="file" accept="application/json" class="hidden" />
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <p id="lblDanger" class="text-sm font-medium">Khu vực nguy hiểm</p>
+                    <button id="resetAll" class="mt-2 px-3 py-2 rounded-xl bg-red-600 text-white hover:bg-red-500">Xóa
+                        toàn bộ dữ liệu</button>
+                </div>
+            </div>
+            <div class="p-4 flex justify-end gap-2 border-t border-zinc-200 dark:border-zinc-800">
+                <button id="closeSettings"
+                    class="px-3 py-2 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700">Đóng</button>
+                <button id="saveSettings"
+                    class="px-3 py-2 rounded-xl bg-indigo-600 text-white hover:bg-indigo-500">Lưu</button>
+            </div>
+        </dialog>
+    </div>
+
+    <script>
+        // ------- Utilities -------
+        const TZ = 'Asia/Ho_Chi_Minh';
+        const LS_KEY = 'hongha_tips_v1';
+        const SETTINGS_KEY = 'hongha_settings_v1';
+
+        const fmtVND = (n) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(Math.round(n || 0));
+
+        function toDateStr(d) {
+            const z = new Date(new Intl.DateTimeFormat('en-CA', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit' }).format(d));
+            const y = z.getFullYear();
+            const m = String(z.getMonth() + 1).padStart(2, '0');
+            const day = String(z.getDate()).padStart(2, '0');
+            return `${y}-${m}-${day}`;
+        }
+        function fromDateStr(s) { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); }
+
+        // Format date string according to language
+        function formatDisplay(iso) {
+            if (!iso) return '';
+            const d = fromDateStr(iso);
+            if (settings.lang === 'vi') {
+                const dd = String(d.getDate()).padStart(2, '0');
+                const mm = String(d.getMonth() + 1).padStart(2, '0');
+                const yyyy = d.getFullYear();
+                return `${dd}/${mm}/${yyyy}`;
+            } else {
+                const mm = String(d.getMonth() + 1).padStart(2, '0');
+                const dd = String(d.getDate()).padStart(2, '0');
+                const yyyy = d.getFullYear();
+                return `${mm}/${dd}/${yyyy}`;
+            }
+        }
+        function parseDisplay(str) {
+            if (!str) return '';
+            const s = String(str).trim();
+            if (settings.lang === 'vi') {
+                const m = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+                if (!m) return '';
+                const dd = m[1].padStart(2, '0');
+                const mm = m[2].padStart(2, '0');
+                const yyyy = m[3];
+                return `${yyyy}-${mm}-${dd}`;
+            } else {
+                const m = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+                if (!m) return '';
+                const mm = m[1].padStart(2, '0');
+                const dd = m[2].padStart(2, '0');
+                const yyyy = m[3];
+                return `${yyyy}-${mm}-${dd}`;
+            }
+        }
+        function setupFilterDateInputs() {
+            const from = els.fromDate, to = els.toDate;
+            [from, to].forEach(el => {
+                el.type = 'text';
+                el.inputMode = 'numeric';
+                el.placeholder = (settings.lang === 'vi') ? 'dd/MM/yyyy' : 'mm/dd/yyyy';
+                if (el.value && /^\d{4}-\d{2}-\d{2}$/.test(el.value)) {
+                    el.value = formatDisplay(el.value);
+                }
+                el.addEventListener('blur', () => {
+                    const iso = parseDisplay(el.value);
+                    el.value = iso ? formatDisplay(iso) : '';
+                    render();
+                });
+            });
+        }
+        function getFilterRange() {
+            const f = parseDisplay(els.fromDate.value) || '0000-01-01';
+            const t = parseDisplay(els.toDate.value) || '9999-12-31';
+            return { from: f, to: t };
+        }
+
+
+        function addDays(date, days) { const d = new Date(date); d.setDate(d.getDate() + days); return d; }
+        function formatDisplay(date) { const d = (date instanceof Date) ? date : fromDateStr(date); return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`; }
+        function uid() { return Math.random().toString(36).slice(2) + Date.now().toString(36); }
+
+        // ---- Date input helpers for VI dd/MM/yyyy display ----
+        function isoFromDisplay(str) {
+            if (!str) return '';
+            if (settings.lang === 'vi') {
+                // expect dd/MM/yyyy
+                const m = String(str).trim().match(/^([0-3]?\d)\/?([0-1]?\d)\/?(\d{4})$/);
+                if (!m) return '';
+                const dd = m[1].padStart(2, '0');
+                const mm = m[2].padStart(2, '0');
+                const yyyy = m[3];
+                return `${yyyy}-${mm}-${dd}`;
+            } else {
+                // assume input type=date -> already yyyy-MM-dd
+                return String(str).trim();
+            }
+        }
+        function displayFromISO(iso) {
+            if (!iso) return '';
+            try {
+                if (settings.lang === 'vi') return formatDisplay(iso);
+                // else return ISO or localized
+                const d = fromDateStr(iso);
+                return new Intl.DateTimeFormat('en-GB').format(d);
+            } catch { return iso; }
+        }
+        function setupFilterDateInputs() {
+            const from = els.fromDate, to = els.toDate;
+            if (settings.lang === 'vi') {
+                // Turn into text fields with dd/MM/yyyy
+                [from, to].forEach(el => {
+                    if (!el) return;
+                    el.type = 'text';
+                    el.inputMode = 'numeric';
+                    el.placeholder = 'dd/MM/yyyy';
+                    // format existing value if any
+                    if (el.value && /^\d{4}-\d{2}-\d{2}$/.test(el.value)) {
+                        el.value = displayFromISO(el.value);
+                    }
+                    el.addEventListener('blur', () => {
+                        // sanitize & format
+                        const iso = isoFromDisplay(el.value);
+                        if (iso) el.value = displayFromISO(iso);
+                    }, { once: true });
+                });
+            } else {
+                // Normal date inputs
+                [from, to].forEach(el => { if (el) el.type = 'date'; });
+            }
+        }
+        function getFilterRange() {
+            if (settings.lang === 'vi') {
+                const f = isoFromDisplay(els.fromDate.value) || '0000-01-01';
+                const t = isoFromDisplay(els.toDate.value) || '9999-12-31';
+                return { from: f, to: t };
+            } else {
+                const f = els.fromDate.value || '0000-01-01';
+                const t = els.toDate.value || '9999-12-31';
+                return { from: f, to: t };
+            }
+        }
+
+
+        function loadSettings() { const s = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}'); return { defaultTomorrow: s.defaultTomorrow !== false, lang: s.lang || 'vi', monthlyTarget: Number(s.monthlyTarget || 0) }; }
+        function saveSettings(s) { localStorage.setItem(SETTINGS_KEY, JSON.stringify(s)); }
+
+        function loadData() { try { return JSON.parse(localStorage.getItem(LS_KEY) || '[]'); } catch { return []; } }
+        function saveData(arr) { localStorage.setItem(LS_KEY, JSON.stringify(arr)); }
+
+        // ------- i18n -------
+        const LANG = {
+            vi: {
+                title: 'Ghi chú tiền tip',
+                subtitlePrefix: 'Nhập hôm nay → tính cho ',
+                todayWord: 'hôm nay', tomorrowWord: 'hôm sau', timezone: 'Múi giờ: Asia/Ho_Chi_Minh',
+                today: 'Hôm nay', tomorrow: 'Ngày mai', thisWeek: 'Tuần này', thisMonth: 'Tháng này',
+                from: 'Từ ngày', to: 'Đến ngày', search: 'Tìm kiếm', sort: 'Sắp xếp',
+                newest: 'Mới nhất', oldest: 'Cũ nhất', amountDesc: 'Số tiền ↓', amountAsc: 'Số tiền ↑',
+                exportCSV: 'Xuất Excel', exportJSON: 'Xuất JSON', importJSON: 'Nhập JSON', last30: '30 ngày gần đây',
+                addTip: '+ Thêm tip', settings: 'Cài đặt', defaultsAndUtils: 'Mặc định & Tiện ích',
+                recordTomorrowDefault: 'Mặc định ghi cho ngày mai', recordTomorrowDesc: 'Khi thêm tip, ngày tính = ngày nhập + 1.',
+                backup: 'Sao lưu', danger: 'Khu vực nguy hiểm', resetAll: 'Xóa toàn bộ dữ liệu', close: 'Đóng',
+                language: 'Ngôn ngữ', confirmDelete: 'Xóa mục này?', importOk: 'Nhập dữ liệu thành công.',
+                importFail: 'Nhập dữ liệu thất bại. ', pleaseAmount: 'Vui lòng nhập số tiền.',
+                empty: "Chưa có mục nào. Nhấn 'Thêm tip'.",
+                addTipTitle: 'Thêm tip', editTipTitle: 'Sửa tip',
+                amount: 'Số tiền (VND)', inputToday: 'Ngày nhập (hôm nay)',
+                recordTomorrow: 'Ghi cho ngày mai (mặc định)', intendedLabel: 'Ngày tính:',
+                override: 'Chỉnh ngày tính (tuỳ chọn)', overrideDesc: 'Mặc định: ngày tính = ngày nhập + 1 khi bật "Ghi cho ngày mai".',
+                source: 'Nguồn', note: 'Ghi chú', cancel: 'Hủy', save: 'Lưu',
+                sourceWalkIn: 'Khách vãng lai', sourceRegular: 'Khách quen', sourceOnline: 'Online',
+                // New labels
+                client: 'Khách hàng', monthlyTarget: 'Mục tiêu tháng', edit: 'Sửa',
+                heatmap: 'Chu kỳ theo thứ (Heatmap)', heatmapHint: 'Tổng mỗi thứ, đậm hơn = nhiều hơn',
+                recurring: 'Khách hàng quay lại', clientHint: 'Dựa trên trường “Khách hàng” trong biểu mẫu.',
+                noRecurring: 'Chưa có dữ liệu khách quay lại',
+                targetUnset: 'Chưa đặt mục tiêu', vsPrev: 'So với tháng trước: '
+            },
+            en: {
+                title: 'Massage Hồng Hà — Tip Tracker',
+                subtitlePrefix: 'Input today → count for ', todayWord: 'today', tomorrowWord: 'tomorrow',
+                timezone: 'Timezone: Asia/Ho_Chi_Minh',
+                today: 'Today', tomorrow: 'Tomorrow', thisWeek: 'This Week', thisMonth: 'This Month',
+                from: 'From', to: 'To', search: 'Search', sort: 'Sort',
+                newest: 'Newest', oldest: 'Oldest', amountDesc: 'Amount ↓', amountAsc: 'Amount ↑',
+                exportCSV: 'Export Excel', exportJSON: 'Export JSON', importJSON: 'Import JSON', last30: 'Last 30 days',
+                addTip: '+ Add Tip', settings: 'Settings', defaultsAndUtils: 'Defaults & Utilities',
+                recordTomorrowDefault: 'Record for tomorrow by default', recordTomorrowDesc: 'When adding a tip, intended date = input date + 1.',
+                backup: 'Backup', danger: 'Danger zone', resetAll: 'Reset all data', close: 'Close',
+                language: 'Language', confirmDelete: 'Delete this entry?', importOk: 'Import successful.',
+                importFail: 'Import failed. ', pleaseAmount: 'Please enter an amount.',
+                empty: "No entries yet. Tap '+ Add Tip'.",
+                addTipTitle: 'Add Tip', editTipTitle: 'Edit Tip',
+                amount: 'Amount (VND)', inputToday: 'Input Date (today)',
+                recordTomorrow: 'Record for tomorrow (default)', intendedLabel: 'Intended date:',
+                override: 'Override intended date', overrideDesc: 'By default, intended = input + 1 day when "Record for tomorrow" is ON.',
+                source: 'Source', note: 'Note', cancel: 'Cancel', save: 'Save',
+                sourceWalkIn: 'Walk-in', sourceRegular: 'Regular', sourceOnline: 'Online',
+                client: 'Client', monthlyTarget: 'Monthly target', edit: 'Edit',
+                heatmap: 'Weekly cycle (Heatmap)', heatmapHint: 'Total per weekday, darker = more',
+                recurring: 'Recurring clients', clientHint: 'Based on the “Client” field in the form.',
+                noRecurring: 'No recurring client data yet',
+                targetUnset: 'No target set', vsPrev: 'Vs prev month: '
+            }
+        };
+        let settings = loadSettings();
+        function t(k) { const L = LANG[settings.lang] || LANG.vi; return L[k] || k; }
+
+        // ------- State -------
+        let entries = loadData();
+
+
+        // Bulk selection state
+        let selectedIds = new Set();
+        // ------- DOM -------
+        const els = {
+            appTitle: document.getElementById('appTitle'),
+            subtitle: document.getElementById('subtitle'),
+            ruleWord: document.getElementById('ruleWord'),
+            sumToday: document.getElementById('sumToday'),
+            sumTomorrow: document.getElementById('sumTomorrow'),
+            sumWeek: document.getElementById('sumWeek'),
+            sumMonth: document.getElementById('sumMonth'),
+            lblToday: document.getElementById('lblToday'),
+            lblTomorrow: document.getElementById('lblTomorrow'),
+            lblThisWeek: document.getElementById('lblThisWeek'),
+            lblThisMonth: document.getElementById('lblThisMonth'),
+            entries: document.getElementById('entries'),
+            fromDate: document.getElementById('fromDate'),
+            toDate: document.getElementById('toDate'),
+            search: document.getElementById('search'),
+            sort: document.getElementById('sort'),
+            optNewest: document.getElementById('optNewest'),
+            optOldest: document.getElementById('optOldest'),
+            optAmountDesc: document.getElementById('optAmountDesc'),
+            optAmountAsc: document.getElementById('optAmountAsc'),
+            exportXLSX: document.getElementById('exportXLSX'),
+            exportJSON: document.getElementById('exportJSON'),
+            importJSON: document.getElementById('importJSON'),
+            importJSONText: document.getElementById('importJSONText'),
+            sparkline: document.getElementById('sparkline'),
+            sparkStats: document.getElementById('sparkStats'),
+            lblLast30: document.getElementById('lblLast30'),
+            fab: document.getElementById('fab'),
+            // Dialog
+            dlg: document.getElementById('entryDialog'),
+            entryForm: document.getElementById('entryForm'),
+            dialogTitle: document.getElementById('dialogTitle'),
+            amount: document.getElementById('amount'),
+            inputDate: document.getElementById('inputDate'),
+            intendedDate: document.getElementById('intendedDate'),
+            intendedPreview: document.getElementById('intendedPreview'),
+            recordTomorrow: document.getElementById('recordTomorrow'),
+            source: document.getElementById('source'),
+            client: document.getElementById('client'),
+            note: document.getElementById('note'),
+            entryId: document.getElementById('entryId'),
+            saveEntry: document.getElementById('btnSave'),
+            logicDesc: document.getElementById('logicDesc'),
+            lblAmount: document.getElementById('lblAmount'),
+            lblInputDate: document.getElementById('lblInputDate'),
+            lblRecordTomorrow: document.getElementById('lblRecordTomorrow'),
+            lblIntendedLabel: document.getElementById('lblIntendedLabel'),
+            lblOverride: document.getElementById('lblOverride'),
+            lblOverrideDesc: document.getElementById('lblOverrideDesc'),
+            lblSource: document.getElementById('lblSource'),
+            lblNote: document.getElementById('lblNote'),
+            btnCancel: document.getElementById('btnCancel'),
+            // Settings
+            openSettings: document.getElementById('openSettings'),
+            settingsDialog: document.getElementById('settingsDialog'),
+            settingsTitle: document.getElementById('settingsTitle'),
+            settingsSubtitle: document.getElementById('settingsSubtitle'),
+            defaultTomorrow: document.getElementById('defaultTomorrow'),
+            resetAll: document.getElementById('resetAll'),
+            settingsExport: document.getElementById('settingsExport'),
+            settingsImport: document.getElementById('settingsImport'),
+            closeSettings: document.getElementById('closeSettings'),
+            saveSettingsBtn: document.getElementById('saveSettings'),
+            lblBackup: document.getElementById('lblBackup'),
+            lblDanger: document.getElementById('lblDanger'),
+            languageSelect: document.getElementById('languageSelect'),
+            lblLanguage: document.getElementById('lblLanguage'),
+            targetInput: document.getElementById('targetInput'),
+            btnSetTarget: document.getElementById('btnSetTarget'),
+            // Revenue UI
+            targetBar: document.getElementById('targetBar'),
+            targetText: document.getElementById('targetText'),
+            targetDelta: document.getElementById('targetDelta'),
+            recurringList: document.getElementById('recurringList'),
+            heatmap: document.getElementById('heatmap'),
+            lblMonthlyTarget: document.getElementById('lblMonthlyTarget'),
+            lblRecurring: document.getElementById('lblRecurring'),
+            lblClientHint: document.getElementById('lblClientHint'),
+            lblHeatmap: document.getElementById('lblHeatmap'),
+            lblHeatmapHint: document.getElementById('lblHeatmapHint'),
+            lblClient: document.getElementById('lblClient'),
+        };
+
+        function setRuleWord() {
+            els.ruleWord.textContent = settings.defaultTomorrow ? t('tomorrowWord') : t('todayWord');
+        }
+
+        // ------- Render -------
+        function applyI18n() {
+            document.documentElement.lang = settings.lang;
+            els.appTitle.textContent = t('title');
+            els.subtitle.innerHTML = `${t('subtitlePrefix')}<span class="font-medium" id="ruleWord">${settings.defaultTomorrow ? t('tomorrowWord') : t('todayWord')}</span>. ${t('timezone')}`;
+            els.lblToday.textContent = t('today');
+            els.lblTomorrow.textContent = t('tomorrow');
+            els.lblThisWeek.textContent = t('thisWeek');
+            els.lblThisMonth.textContent = t('thisMonth');
+            document.getElementById('lblFrom').textContent = t('from');
+            document.getElementById('lblTo').textContent = t('to');
+            document.getElementById('lblSearch').textContent = t('search');
+            document.getElementById('lblSort').textContent = t('sort');
+            els.optNewest.textContent = t('newest');
+            els.optOldest.textContent = t('oldest');
+            els.optAmountDesc.textContent = t('amountDesc');
+            els.optAmountAsc.textContent = t('amountAsc');
+            els.exportXLSX.textContent = t('exportCSV');
+            els.exportJSON.textContent = t('exportJSON');
+            els.importJSONText.textContent = t('importJSON');
+            els.lblLast30.textContent = t('last30');
+            els.fab.textContent = t('addTip');
+            // Dialog
+            els.dialogTitle.textContent = t('addTipTitle');
+            els.logicDesc.textContent = settings.defaultTomorrow ? t('recordTomorrowDefault') : (settings.lang === 'vi' ? 'Ghi cho hôm nay' : 'Record for today');
+            els.lblAmount.textContent = t('amount');
+            els.lblInputDate.textContent = t('inputToday');
+            els.lblRecordTomorrow.textContent = t('recordTomorrow');
+            els.lblIntendedLabel.textContent = t('intendedLabel');
+            els.lblOverride.textContent = t('override');
+            els.lblOverrideDesc.textContent = t('overrideDesc');
+            els.lblSource.textContent = t('source');
+            els.lblNote.textContent = t('note');
+            els.lblClient.textContent = t('client');
+            els.btnCancel.textContent = t('cancel');
+            els.saveEntry.textContent = t('save');
+            // Source options
+            els.source.options[0].textContent = t('sourceWalkIn');
+            els.source.options[1].textContent = t('sourceRegular');
+            els.source.options[2].textContent = t('sourceOnline');
+            // Settings
+            els.openSettings.textContent = t('settings');
+            els.settingsTitle.textContent = t('settings');
+            els.settingsSubtitle.textContent = t('defaultsAndUtils');
+            document.getElementById('lblDefaultTomorrow').textContent = t('recordTomorrowDefault');
+            document.getElementById('descDefaultTomorrow').textContent = t('recordTomorrowDesc');
+            els.lblLanguage.textContent = t('language');
+            els.lblBackup.textContent = t('backup');
+            els.lblDanger.textContent = t('danger');
+            els.closeSettings.textContent = t('close');
+            els.saveSettingsBtn.textContent = t('save');
+            document.getElementById('lblTargetSetting').textContent = t('monthlyTarget');
+            // Revenue labels
+            els.lblMonthlyTarget.textContent = t('monthlyTarget');
+            els.lblRecurring.textContent = t('recurring');
+            els.lblClientHint.textContent = t('clientHint');
+            els.lblHeatmap.textContent = t('heatmap');
+            els.lblHeatmapHint.textContent = t('heatmapHint');
+        }
+
+        function render() {
+            setRuleWord();
+            applyI18n();
+            setupFilterDateInputs();
+            renderSummaries();
+            renderList();
+            renderSparkline();
+            if (typeof renderRevenue === 'function') renderRevenue();
+        }
+
+        function sumFor(predicate) { return entries.filter(predicate).reduce((s, e) => s + Number(e.amountVND || 0), 0); }
+        function isSameDayStr(a, b) { return a === b; }
+        function startOfWeek(d) { const dt = fromDateStr(d); const day = (dt.getDay() + 6) % 7; dt.setDate(dt.getDate() - day); return toDateStr(dt); }
+        function startOfMonth(d) { return d.slice(0, 7) + '-01'; }
+        function addDaysISOstr(iso, days) { return toDateStr(addDays(fromDateStr(iso), days)); }
+
+        function renderSummaries() {
+            const today = toDateStr(new Date());
+            const tomorrow = toDateStr(addDays(new Date(), 1));
+            els.sumToday.textContent = fmtVND(sumFor(e => isSameDayStr(e.intendedDate, today)));
+            els.sumTomorrow.textContent = fmtVND(sumFor(e => isSameDayStr(e.intendedDate, tomorrow)));
+            const sow = startOfWeek(today);
+            const month = today.slice(0, 7);
+            els.sumWeek.textContent = fmtVND(sumFor(e => e.intendedDate >= sow && e.intendedDate <= today));
+            els.sumMonth.textContent = fmtVND(sumFor(e => e.intendedDate.startsWith(month)));
+        }
+
+
+        function applyFilters(list) {
+            const q = els.search.value.trim().toLowerCase();
+            const range = getFilterRange();
+            let L = list.filter(e => e.intendedDate >= range.from && e.intendedDate <= range.to);
+            if (q) { L = L.filter(e => (e.note || '').toLowerCase().includes(q) || (e.source || '').toLowerCase().includes(q) || (e.client || '').toLowerCase().includes(q)); }
+            switch (els.sort.value) {
+                case 'oldest': L.sort((a, b) => a.intendedDate.localeCompare(b.intendedDate) || a.createdAt.localeCompare(b.createdAt)); break;
+                case 'amountDesc': L.sort((a, b) => b.amountVND - a.amountVND); break;
+                case 'amountAsc': L.sort((a, b) => a.amountVND - b.amountVND); break;
+                default: L.sort((a, b) => b.intendedDate.localeCompare(a.intendedDate) || b.createdAt.localeCompare(a.createdAt));
+            }
+            return L;
+        }
+
+
+        function groupByDate(list) {
+            // Order-preserving grouping: follow the current order of 'list'
+            const out = [];
+            const idx = new Map();
+            for (const e of list) {
+                if (!idx.has(e.intendedDate)) {
+                    idx.set(e.intendedDate, out.length);
+                    out.push([e.intendedDate, []]);
+                }
+                out[idx.get(e.intendedDate)][1].push(e);
+            }
+            return out;
+        }
+
+        function renderList() {
+            const L = applyFilters([...entries]);
+            const groups = groupByDate(L);
+            if (groups.length === 0) {
+                els.entries.innerHTML = `<div class="text-center text-zinc-500 mt-10">${t('empty')}</div>`;
+                return;
+            }
+
+            // Build global toolbar (top of list): [Chọn tất cả/Bỏ chọn tất cả] + [Xóa đã chọn]
+            const allIds = L.map(e => e.id);
+            const allSelected = allIds.length > 0 && allIds.every(id => selectedIds.has(id));
+            const globalToggleLabel = settings.lang === 'vi' ? (allSelected ? 'Bỏ chọn tất cả' : 'Chọn tất cả') : (allSelected ? 'Unselect all' : 'Select all');
+            const globalDeleteLabel = settings.lang === 'vi' ? 'Xóa đã chọn' : 'Delete selected';
+
+            const headerHtml = `
+      <div class="card bg-white dark:bg-zinc-800 p-3 mb-3">
+        <div class="flex items-center justify-between gap-2 flex-wrap">
+          <div class="text-sm text-zinc-500">${settings.lang === 'vi' ? 'Đang hiển thị' : 'Showing'}: <span class="font-medium">${L.length}</span> ${settings.lang === 'vi' ? 'mục' : 'items'}</div>
+          <div class="flex items-center gap-2">
+            <button id="btnToggleAllGlobal" class="px-3 py-2 text-xs rounded-lg bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-900 dark:hover:bg-zinc-700">${globalToggleLabel}</button>
+            <button id="btnDeleteSelectedGlobal" class="px-3 py-2 text-xs rounded-lg bg-red-600 text-white hover:bg-red-500">${globalDeleteLabel}</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+            // Build each day card; per-day header has only a "Chọn tất cả/Bỏ chọn tất cả" for that day
+            const html = groups.map(([date, items]) => {
+                const subtotal = items.reduce((s, e) => s + Number(e.amountVND), 0);
+                const dayIds = items.map(x => x.id);
+                const dayAllSelected = dayIds.length > 0 && dayIds.every(id => selectedIds.has(id));
+                const dayToggleLabel = settings.lang === 'vi' ? (dayAllSelected ? 'Bỏ chọn tất cả' : 'Chọn tất cả') : (dayAllSelected ? 'Unselect all' : 'Select all');
+
+                const rows = items.map(e => `
+          <div class="grid grid-cols-12 items-center py-2 px-2 hover:bg-zinc-50 dark:hover:bg-zinc-800/60 rounded-xl fade">
+            <div class="col-span-1 flex justify-center">
+              <input type="checkbox" class="selectTip w-4 h-4" data-id="${e.id}" ${selectedIds.has(e.id) ? 'checked' : ''} />
+            </div>
+            <div class="col-span-5 sm:col-span-4">
+              <div class="font-medium">${fmtVND(e.amountVND)}</div>
+              <div class="text-xs text-zinc-500">${(settings.lang === 'vi' ? (e.source === 'walk-in' ? 'Khách vãng lai' : e.source === 'regular' ? 'Khách quen' : 'Online') : e.source)}${e.client ? ' · 👤 ' + e.client : ''}${e.note ? ' · ' + e.note : ''}</div>
+            </div>
+            <div class="col-span-3 text-xs text-zinc-500">Input: ${formatDisplay(e.inputDate)}</div>
+            <div class="col-span-2 text-xs text-zinc-500">Saved: ${new Date(e.createdAt).toLocaleString('vi-VN')}</div>
+            <div class="col-span-12 sm:col-span-2 flex justify-end gap-2 mt-2 sm:mt-0">
+              <button data-edit="${e.id}" class="px-3 py-1.5 text-sm rounded-lg bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700">${settings.lang === 'vi' ? 'Sửa' : 'Edit'}</button>
+              <button data-del="${e.id}" class="px-3 py-1.5 text-sm rounded-lg bg-red-600 text-white hover:bg-red-500">${settings.lang === 'vi' ? 'Xóa' : 'Delete'}</button>
+            </div>
+          </div>
+        `).join('');
+
+                return `
+          <div class="card bg-white dark:bg-zinc-800 p-4 mb-3">
+            <div class="flex items-center justify-between gap-2 flex-wrap">
+              <h3 class="text-sm font-semibold">${formatDisplay(date)}</h3>
+              <div class="flex items-center gap-2">
+                <div class="text-sm text-zinc-500">Subtotal: <span class="font-medium">${fmtVND(subtotal)}</span></div>
+                <button class="px-2.5 py-1.5 text-xs rounded-lg bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-900 dark:hover:bg-zinc-700" data-select-all="${date}">${dayToggleLabel}</button>
+              </div>
+            </div>
+            <div class="mt-2 divide-y divide-zinc-100 dark:divide-zinc-800">${rows}</div>
+          </div>
+        `;
+            }).join('');
+
+            els.entries.innerHTML = headerHtml + html;
+
+            // Wire item checkboxes
+            els.entries.querySelectorAll('.selectTip').forEach(cb => {
+                cb.addEventListener('change', () => {
+                    const id = cb.dataset.id;
+                    if (cb.checked) selectedIds.add(id);
+                    else selectedIds.delete(id);
+                    // update labels after change
+                    render();
+                });
+            });
+
+            // Per-day select-all / toggle
+            els.entries.querySelectorAll('[data-select-all]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const date = btn.dataset.selectAll;
+                    const ids = (groups.find(g => g[0] === date) || [null, []])[1].map(x => x.id);
+                    const allSel = ids.length > 0 && ids.every(id => selectedIds.has(id));
+                    ids.forEach(id => { if (allSel) selectedIds.delete(id); else selectedIds.add(id); });
+                    render();
+                });
+            });
+
+            // Global "Select all / Unselect all"
+            const btnToggleAllGlobal = document.getElementById('btnToggleAllGlobal');
+            if (btnToggleAllGlobal) {
+                btnToggleAllGlobal.addEventListener('click', () => {
+                    const allSel = allIds.length > 0 && allIds.every(id => selectedIds.has(id));
+                    if (allSel) {
+                        allIds.forEach(id => selectedIds.delete(id));
+                    } else {
+                        allIds.forEach(id => selectedIds.add(id));
+                    }
+                    render();
+                });
+            }
+
+            // Single global delete button
+            const btnDeleteSelectedGlobal = document.getElementById('btnDeleteSelectedGlobal');
+            if (btnDeleteSelectedGlobal) {
+                btnDeleteSelectedGlobal.addEventListener('click', () => {
+                    const toDelete = entries.filter(e => selectedIds.has(e.id));
+                    if (!toDelete.length) {
+                        alert(settings.lang === 'vi' ? 'Chưa chọn mục nào.' : 'No selected tips.');
+                        return;
+                    }
+                    if (!confirm((settings.lang === 'vi' ? 'Xóa ' : 'Delete ') + toDelete.length + (settings.lang === 'vi' ? ' mục đã chọn?' : ' selected tips?'))) return;
+                    const delIds = new Set(toDelete.map(x => x.id));
+                    entries = entries.filter(e => !delIds.has(e.id));
+                    // clear from selectedIds
+                    toDelete.forEach(x => selectedIds.delete(x.id));
+                    saveData(entries);
+                    render();
+                });
+            }
+        }
+
+        function renderSparkline() {
+            const today = toDateStr(new Date());
+            const days = [];
+            for (let i = 29; i >= 0; i--) {
+                const d = toDateStr(addDays(fromDateStr(today), -i));
+                const total = entries.filter(e => e.intendedDate === d).reduce((s, e) => s + Number(e.amountVND), 0);
+                days.push({ d, total });
+            }
+            const max = Math.max(1, ...days.map(x => x.total));
+            const pts = days.map((x, i) => {
+                const xPos = (i / (days.length - 1)) * 600;
+                const yPos = 110 - (x.total / max) * 100;
+                return `${xPos},${yPos}`;
+            }).join(' ');
+            els.sparkline.innerHTML = `<polyline fill="none" stroke="currentColor" stroke-width="2" points="${pts}" />`;
+            const last7 = days.slice(-7).reduce((s, x) => s + x.total, 0);
+            const last30 = days.reduce((s, x) => s + x.total, 0);
+            els.sparkStats.textContent = `7d: ${fmtVND(last7)} · 30d: ${fmtVND(last30)}`;
+        }
+
+        // ------- Revenue (target, heatmap, recurring) -------
+        function computeRevenue() {
+            const today = toDateStr(new Date());
+            const thisMonthStart = startOfMonth(today);
+            const prevMonthEnd = toDateStr(addDays(fromDateStr(thisMonthStart), -1));
+            const prevMonthStart = startOfMonth(prevMonthEnd);
+
+            const thisMonthList = entries.filter(e => e.intendedDate >= thisMonthStart && e.intendedDate <= today);
+            const prevMonthList = entries.filter(e => e.intendedDate >= prevMonthStart && e.intendedDate <= prevMonthEnd);
+            const thisMonthSum = thisMonthList.reduce((s, e) => s + Number(e.amountVND), 0);
+            const prevMonthSum = prevMonthList.reduce((s, e) => s + Number(e.amountVND), 0);
+
+
+            // Heatmap (contrast-aware)
+            els.heatmap.innerHTML = '';
+            const namesVI = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
+            const namesEN = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            const names = settings.lang === 'vi' ? namesVI : namesEN;
+            weekdayTotals.forEach((val, i) => {
+                // Lightness from 95 (min) to ~40 (max) for better spread
+                const ratio = maxDay > 0 ? (val / maxDay) : 0;
+                const L = Math.round(95 - ratio * 55); // 95..40
+                const bg = `hsl(220 15% ${L}%)`;
+                const textColor = (L < 65) ? '#fff' : '#111';
+                const subColor = (L < 65) ? 'rgba(255,255,255,0.85)' : '#475569';
+                const borderColor = (L < 80) ? 'rgba(0,0,0,0.12)' : 'rgba(0,0,0,0.08)';
+
+                const cell = document.createElement('div');
+                cell.className = 'rounded-xl p-3 text-center border';
+                if (i === 6) cell.className += ' hm-sun';
+                cell.style.background = bg;
+                cell.style.borderColor = borderColor;
+
+                const day = document.createElement('div');
+                day.className = 'text-xs';
+                day.textContent = names[i];
+                day.style.color = subColor;
+
+                const value = document.createElement('div');
+                value.className = 'font-semibold';
+                value.textContent = fmtVND(val);
+                value.style.color = textColor;
+
+                if (!val) {
+                    // subtle stripes to indicate zero
+                    cell.style.backgroundImage = 'repeating-linear-gradient(45deg, transparent 0 6px, rgba(0,0,0,0.04) 6px 12px)';
+                    cell.style.backgroundBlendMode = 'multiply';
+                }
+
+                cell.appendChild(day);
+                cell.appendChild(value);
+                els.heatmap.appendChild(cell);
+            });
+        }
+
+        // ------- CRUD -------
+        function openDialogForNew() {
+            els.dialogTitle.textContent = t('addTipTitle');
+            els.entryId.value = '';
+            els.amount.value = '';
+            const now = new Date();
+            els.inputDate.value = toDateStr(now);
+            els.recordTomorrow.checked = settings.defaultTomorrow;
+            const intended = settings.defaultTomorrow ? toDateStr(addDays(now, 1)) : toDateStr(now);
+            els.intendedDate.value = intended;
+            els.intendedPreview.textContent = formatDisplay(intended);
+            els.source.value = 'walk-in';
+            els.client.value = '';
+            els.note.value = '';
+            els.logicDesc.textContent = settings.defaultTomorrow ? t('recordTomorrowDefault') : (settings.lang === 'vi' ? 'Ghi cho hôm nay' : 'Record for today');
+            els.dlg.showModal();
+            setTimeout(() => els.amount.focus(), 50);
+        }
+        function openDialogForEdit(id) {
+            const e = entries.find(x => x.id === id);
+            if (!e) return;
+            els.dialogTitle.textContent = t('editTipTitle');
+            els.entryId.value = e.id;
+            els.amount.value = e.amountVND;
+            els.inputDate.value = e.inputDate;
+            els.recordTomorrow.checked = false;
+            els.intendedDate.value = e.intendedDate;
+            els.intendedPreview.textContent = formatDisplay(e.intendedDate);
+            els.source.value = e.source || 'walk-in';
+            els.client.value = e.client || '';
+            els.note.value = e.note || '';
+            els.logicDesc.textContent = settings.lang === 'vi' ? 'Chỉnh tay' : 'Manual edit';
+            els.dlg.showModal();
+            setTimeout(() => els.amount.focus(), 50);
+        }
+
+        function delEntry(id) {
+            if (!confirm(t('confirmDelete'))) return;
+            entries = entries.filter(e => e.id !== id);
+            saveData(entries);
+            render();
+        }
+
+        function upsertEntry(obj) {
+            const idx = entries.findIndex(e => e.id === obj.id);
+            if (idx >= 0) entries[idx] = obj; else entries.push(obj);
+            saveData(entries);
+            render();
+        }
+
+        // ------- Events -------
+        document.getElementById('fab').addEventListener('click', openDialogForNew);
+        els.entryForm.addEventListener('submit', (ev) => {
+            ev.preventDefault();
+            const id = els.entryId.value || uid();
+            const amount = Number(String(els.amount.value).replace(/\D/g, ''));
+            if (!amount) { alert(t('pleaseAmount')); return; }
+            const inputDate = els.inputDate.value || toDateStr(new Date());
+            let intended = els.intendedDate.value;
+            if (els.recordTomorrow.checked) {
+                const base = fromDateStr(inputDate);
+                intended = toDateStr(addDays(base, 1));
+            }
+            const obj = {
+                id,
+                createdAt: new Date().toISOString(),
+                inputDate,
+                intendedDate: intended || inputDate,
+                amountVND: amount,
+                note: els.note.value.trim(),
+                source: els.source.value,
+                client: els.client.value.trim()
+            };
+            upsertEntry(obj);
+            els.dlg.close();
+        });
+
+        document.querySelectorAll('.quick').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const v = Number(btn.dataset.quick);
+                const cur = Number(String(els.amount.value || '').replace(/\D/g, '')) || 0;
+                els.amount.value = String(cur + v);
+            });
+        });
+
+        function refreshIntendedPreview() {
+            const base = els.inputDate.value ? fromDateStr(els.inputDate.value) : new Date();
+            const d = els.recordTomorrow.checked ? addDays(base, 1) : base;
+            const override = els.intendedDate.value;
+            const picked = override || toDateStr(d);
+            els.intendedPreview.textContent = formatDisplay(picked);
+        }
+        ['change', 'input'].forEach(ev => {
+            els.inputDate.addEventListener(ev, refreshIntendedPreview);
+            els.recordTomorrow.addEventListener(ev, refreshIntendedPreview);
+            els.intendedDate.addEventListener(ev, refreshIntendedPreview);
+        });
+
+        // Filters
+        ['change', 'input'].forEach(ev => {
+            els.fromDate.addEventListener(ev, render);
+            els.toDate.addEventListener(ev, render);
+            els.search.addEventListener(ev, render);
+            els.sort.addEventListener(ev, render);
+        });
+
+        // Clear filters
+        const clearBtn = document.getElementById('btnClearFilters');
+        if (clearBtn) clearBtn.addEventListener('click', () => {
+            els.search.value = '';
+            els.fromDate.value = '';
+            els.toDate.value = '';
+            els.sort.value = 'newest';
+            render();
+        });
+
+        // Bulk delete entries matched by current filters
+        const bulkBtn = document.getElementById('btnBulkDelete');
+        if (bulkBtn) bulkBtn.addEventListener('click', () => {
+            const matched = applyFilters([...entries]);
+            if (!matched.length) { alert(settings.lang === 'vi' ? 'Không có mục nào khớp bộ lọc.' : 'No entries match the current filter.'); return; }
+            const ok = confirm((settings.lang === 'vi' ? 'Xóa ' : 'Delete ') + matched.length + (settings.lang === 'vi' ? ' mục theo bộ lọc hiện tại?' : ' entries matching the current filter?'));
+            if (!ok) return;
+            const ids = new Set(matched.map(e => e.id));
+            entries = entries.filter(e => !ids.has(e.id));
+            saveData(entries);
+            render();
+        });
+
+
+        // Exports
+        function download(filename, text) {
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob([text], { type: 'text/plain' }));
+            a.download = filename; a.click();
+            URL.revokeObjectURL(a.href);
+        }
+        els.exportJSON.addEventListener('click', () => {
+            const name = `tips_${toDateStr(new Date())}.json`;
+            download(name, JSON.stringify(entries, null, 2));
+        });
+        document.getElementById('settingsExport').addEventListener('click', () => {
+            const name = `tips_${toDateStr(new Date())}.json`;
+            download(name, JSON.stringify(entries, null, 2));
+        });
+
+        // NEW: Export to Excel (.xlsx)
+        els.exportXLSX.addEventListener('click', () => {
+            const hdr = ['id', 'createdAt', 'inputDate', 'intendedDate', 'amountVND', 'source', 'client', 'note'];
+            const rows = entries.map(e => [e.id, e.createdAt, e.inputDate, e.intendedDate, e.amountVND, e.source || '', e.client || '', e.note || '']);
+            const ws = XLSX.utils.aoa_to_sheet([hdr, ...rows]);
+            ws['!cols'] = [{ wch: 20 }, { wch: 20 }, { wch: 12 }, { wch: 12 }, { wch: 12 }, { wch: 12 }, { wch: 18 }, { wch: 32 }];
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Tips');
+
+            // Stats sheet
+            const today = toDateStr(new Date());
+            const thisMonthStart = startOfMonth(today);
+            const prevMonthEnd = toDateStr(addDays(fromDateStr(thisMonthStart), -1));
+            const prevMonthStart = startOfMonth(prevMonthEnd);
+            const thisMonthSum = entries.filter(e => e.intendedDate >= thisMonthStart && e.intendedDate <= today).reduce((s, e) => s + Number(e.amountVND), 0);
+            const prevMonthSum = entries.filter(e => e.intendedDate >= prevMonthStart && e.intendedDate <= prevMonthEnd).reduce((s, e) => s + Number(e.amountVND), 0);
+            const weekdayTotals = Array(7).fill(0);
+            entries.forEach(e => { const idx = (fromDateStr(e.intendedDate).getDay() + 6) % 7; weekdayTotals[idx] += Number(e.amountVND) || 0; });
+            const names = settings.lang === 'vi' ? ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'] : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            const stats = [
+                ['Metric', 'Value'],
+                ['This Month', thisMonthSum],
+                ['Prev Month', prevMonthSum],
+                ['Monthly Target', settings.monthlyTarget || 0],
+                [],
+                ['Weekday', 'Total'],
+                ...names.map((n, i) => [n, weekdayTotals[i]])
+            ];
+            const ws2 = XLSX.utils.aoa_to_sheet(stats);
+            ws2['!cols'] = [{ wch: 24 }, { wch: 18 }];
+            XLSX.utils.book_append_sheet(wb, ws2, 'Stats');
+
+            const name = `tips_${toDateStr(new Date())}.xlsx`;
+            XLSX.writeFile(wb, name);
+        });
+
+        function handleImport(file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                try {
+                    const data = JSON.parse(reader.result);
+                    if (!Array.isArray(data)) throw new Error('Invalid file');
+                    const map = new Map(entries.map(e => [e.id, e]));
+                    for (const e of data) { map.set(e.id, e); }
+                    entries = Array.from(map.values());
+                    saveData(entries); render(); alert(t('importOk'));
+                } catch (err) { alert(t('importFail') + err.message); }
+            };
+            reader.readAsText(file);
+        }
+        els.importJSON.addEventListener('change', (e) => { const f = e.target.files[0]; if (f) handleImport(f); e.target.value = ''; });
+        document.getElementById('settingsImport').addEventListener('change', (e) => { const f = e.target.files[0]; if (f) handleImport(f); e.target.value = ''; });
+
+        // Settings
+        els.openSettings.addEventListener('click', () => {
+            els.defaultTomorrow.checked = settings.defaultTomorrow;
+            els.languageSelect.value = settings.lang;
+            els.targetInput.value = settings.monthlyTarget || '';
+            els.settingsDialog.showModal();
+        });
+        els.closeSettings.addEventListener('click', () => els.settingsDialog.close());
+        els.saveSettingsBtn.addEventListener('click', () => {
+            settings.defaultTomorrow = els.defaultTomorrow.checked;
+            settings.lang = els.languageSelect.value;
+            settings.monthlyTarget = Number(els.targetInput.value || 0);
+            saveSettings(settings);
+            setRuleWord(); applyI18n();
+            setupFilterDateInputs(); if (typeof renderRevenue === 'function') renderRevenue(); // keep UI in sync
+            els.settingsDialog.close();
+        });
+        els.defaultTomorrow.addEventListener('change', () => {
+            settings.defaultTomorrow = els.defaultTomorrow.checked;
+            saveSettings(settings); setRuleWord(); applyI18n();
+            setupFilterDateInputs();
+        });
+        els.languageSelect.addEventListener('change', () => {
+            settings.lang = els.languageSelect.value;
+            saveSettings(settings); render();
+        });
+        els.btnSetTarget.addEventListener('click', () => els.openSettings.click());
+        els.resetAll.addEventListener('click', () => {
+            if (confirm(settings.lang === 'vi' ? 'Xóa TẤT CẢ dữ liệu? Không thể hoàn tác.' : 'Reset ALL data? This cannot be undone.')) {
+                entries = []; saveData(entries); render(); alert(settings.lang === 'vi' ? 'Đã xóa dữ liệu.' : 'All data cleared.');
+            }
+        });
+
+        // Init
+        setupFilterDateInputs();
+        render();
+    </script>
+
+    <script>
+        // === Supabase Auth + Sync + User Info ===
+        let currentUser = null;
+
+        function initialsFrom(str) {
+            if (!str) return 'U';
+            const parts = str.split('@')[0].split(/[.\s_-]+/).filter(Boolean);
+            const a = parts[0]?.[0] || str[0];
+            const b = parts[1]?.[0] || '';
+            return (a + b).toUpperCase().slice(0, 2);
+        }
+
+        async function checkSession() {
+            const { data: { session }, error } = await supabase.auth.getSession();
+            if (error) console.error(error);
+            currentUser = session?.user || null;
+
+            const btn = document.getElementById('btnAuth');
+            const pill = document.getElementById('userPill');
+            const nameEl = document.getElementById('userName');
+            const avatarEl = document.getElementById('userAvatar');
+            const avatarImg = document.getElementById('userAvatarImg');
+
+            if (currentUser) {
+                const email = currentUser.email || currentUser.user_metadata?.email || '';
+                const name = currentUser.user_metadata?.name || (email ? email.split('@')[0] : '');
+                nameEl.textContent = name || (settings?.lang === 'vi' ? 'Không tên' : 'No name');
+                const avatarUrl = currentUser.user_metadata?.avatar_url || currentUser.user_metadata?.picture || '';
+                if (avatarUrl) {
+                    avatarImg.src = avatarUrl;
+                    avatarImg.classList.remove('hidden');
+                    avatarEl.classList.add('hidden');
+                } else {
+                    avatarEl.textContent = initialsFrom(name || email || 'U');
+                    avatarEl.classList.remove('hidden');
+                    avatarImg.classList.add('hidden');
+                }
+                pill.classList.remove('hidden');
+                btn.textContent = settings?.lang === 'vi' ? 'Đăng xuất' : 'Sign out';
+            } else {
+                pill.classList.add('hidden');
+                const avatarImg = document.getElementById('userAvatarImg'); if (avatarImg) { avatarImg.classList.add('hidden'); avatarImg.removeAttribute('src'); }
+                const avatarEl = document.getElementById('userAvatar'); if (avatarEl) { avatarEl.classList.remove('hidden'); avatarEl.textContent = 'U'; }
+                btn.textContent = settings?.lang === 'vi' ? 'Đăng nhập' : 'Sign in';
+            }
+        }
+
+        async function login() {
+            const email = prompt(settings?.lang === 'vi' ? 'Nhập email để nhận link đăng nhập:' : 'Enter your email to receive a sign-in link:');
+            if (!email) return;
+            const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.href } });
+            if (error) return alert((settings?.lang === 'vi' ? 'Lỗi đăng nhập: ' : 'Login error: ') + error.message);
+            alert(settings?.lang === 'vi' ? 'Đã gửi email. Mở email và bấm link để đăng nhập.' : 'Email sent. Open your email and click the sign-in link.');
+        }
+
+        async function logout() {
+            await supabase.auth.signOut();
+            currentUser = null;
+            alert(settings?.lang === 'vi' ? 'Đã đăng xuất' : 'Signed out');
+            checkSession();
+        }
+
+        async function pullTips() {
+            if (!currentUser) return;
+            const { data, error } = await supabase
+                .from('tips')
+                .select('*')
+                .is('deleted_at', null);
+            if (error) { console.error(error); return; }
+
+            const map = new Map((entries || []).map(e => [e.id, e]));
+            for (const r of data) {
+                const local = map.get(r.id);
+                const remoteUpdated = new Date(r.updated_at || r.created_at);
+                const localUpdated = new Date(local?.updatedAt || local?.createdAt || 0);
+                if (!local || remoteUpdated > localUpdated) {
+                    map.set(r.id, {
+                        id: r.id,
+                        createdAt: r.created_at,
+                        updatedAt: r.updated_at,
+                        inputDate: r.input_date,
+                        intendedDate: r.intended_date,
+                        amountVND: r.amount_vnd,
+                        source: r.source || null,
+                        client: r.client || null,
+                        note: r.note || null
+                    });
+                }
+            }
+            entries = Array.from(map.values());
+            localStorage.setItem('hongha_tips_v1', JSON.stringify(entries));
+            if (typeof render === 'function') render();
+        }
+
+        async function pushTips() {
+            if (!currentUser || !entries?.length) return;
+            const payload = entries.map(e => ({
+                id: e.id,
+                user_id: currentUser.id,
+                created_at: e.createdAt,
+                updated_at: e.updatedAt || e.createdAt,
+                input_date: e.inputDate,
+                intended_date: e.intendedDate,
+                amount_vnd: e.amountVND,
+                source: e.source || null,
+                client: e.client || null,
+                note: e.note || null,
+                deleted_at: null
+            }));
+            const { error } = await supabase.from('tips').upsert(payload, { onConflict: 'id' });
+            if (error) console.error(error);
+        }
+
+        async function syncSettings() {
+            if (!currentUser) return;
+            const s = JSON.parse(localStorage.getItem('hongha_settings_v1') || '{}');
+            const pushPayload = {
+                user_id: currentUser.id,
+                default_tomorrow: s.defaultTomorrow !== false,
+                lang: s.lang || 'vi',
+                monthly_target: Number(s.monthlyTarget || 0)
+            };
+            await supabase.from('user_settings').upsert(pushPayload, { onConflict: 'user_id' });
+
+            const { data, error } = await supabase
+                .from('user_settings')
+                .select('*')
+                .eq('user_id', currentUser.id)
+                .single();
+            if (!error && data) {
+                const merged = {
+                    defaultTomorrow: data.default_tomorrow,
+                    lang: data.lang,
+                    monthlyTarget: data.monthly_target
+                };
+                localStorage.setItem('hongha_settings_v1', JSON.stringify(merged));
+                if (typeof loadSettings === 'function') { settings = loadSettings(); }
+                if (typeof render === 'function') render();
+            }
+        }
+
+        async function syncAll() {
+            await checkSession();
+            if (!currentUser) { alert(settings?.lang === 'vi' ? 'Hãy đăng nhập để đồng bộ.' : 'Please sign in to sync.'); return; }
+            await pushTips();
+            await pullTips();
+            await syncSettings();
+            alert(settings?.lang === 'vi' ? 'Đồng bộ xong.' : 'Sync complete.');
+        }
+
+        window.addEventListener('load', async () => {
+            await checkSession();
+            const authBtn = document.getElementById('btnAuth');
+            if (authBtn) authBtn.addEventListener('click', async () => {
+                if (currentUser) await logout(); else await login();
+                await checkSession();
+            });
+            const syncBtn = document.getElementById('btnSync');
+            if (syncBtn) syncBtn.addEventListener('click', syncAll);
+            // Optional: background sync every 10 minutes
+            setInterval(() => { if (currentUser) syncAll(); }, 10 * 60 * 1000);
+        });
+    </script>
+
+    <script>
+        // --- FIX: restore computeRevenue + renderRevenue (contrast-aware, mobile-friendly) ---
+        function computeRevenue() {
+            const today = toDateStr(new Date());
+            const thisMonthStart = startOfMonth(today);
+            const prevMonthEnd = toDateStr(addDays(fromDateStr(thisMonthStart), -1));
+            const prevMonthStart = startOfMonth(prevMonthEnd);
+
+            const thisMonthList = entries.filter(e => e.intendedDate >= thisMonthStart && e.intendedDate <= today);
+            const prevMonthList = entries.filter(e => e.intendedDate >= prevMonthStart && e.intendedDate <= prevMonthEnd);
+            const thisMonthSum = thisMonthList.reduce((s, e) => s + Number(e.amountVND), 0);
+            const prevMonthSum = prevMonthList.reduce((s, e) => s + Number(e.amountVND), 0);
+
+            // Heatmap by weekday
+            const weekdayTotals = Array(7).fill(0); // Mon..Sun
+            entries.forEach(e => {
+                const d = fromDateStr(e.intendedDate);
+                const idx = (d.getDay() + 6) % 7;
+                weekdayTotals[idx] += Number(e.amountVND) || 0;
+            });
+            const maxDay = Math.max(1, ...weekdayTotals);
+
+            // Recurring clients
+            const map = new Map();
+            entries.forEach(e => {
+                const name = (e.client || '').trim();
+                if (!name) return;
+                const cur = map.get(name) || { count: 0, total: 0 };
+                cur.count++; cur.total += Number(e.amountVND) || 0;
+                map.set(name, cur);
+            });
+            const recurring = Array.from(map.entries()).sort((a, b) => b[1].count - a[1].count || b[1].total - a[1].total).slice(0, 5);
+
+            return { thisMonthSum, prevMonthSum, weekdayTotals, maxDay, recurring };
+        }
+
+        function renderRevenue() {
+            const { thisMonthSum, prevMonthSum, weekdayTotals, maxDay, recurring } = computeRevenue();
+            // Target
+            const target = Number(settings.monthlyTarget || 0);
+            const pct = target > 0 ? Math.min(100, Math.round(100 * thisMonthSum / target)) : 0;
+            els.targetBar.style.width = pct + '%';
+            els.targetText.textContent = target > 0 ? `${fmtVND(thisMonthSum)} / ${fmtVND(target)} (${pct}%)` : t('targetUnset');
+            const delta = thisMonthSum - prevMonthSum;
+            els.targetDelta.textContent = t('vsPrev') + (delta >= 0 ? '+' : '') + fmtVND(delta);
+
+            // Recurring
+            els.recurringList.innerHTML = '';
+            if (recurring.length === 0) {
+                const li = document.createElement('li');
+                li.textContent = t('noRecurring');
+                els.recurringList.appendChild(li);
+            } else {
+                recurring.forEach(([name, info]) => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<span class="font-medium">${name}</span> — ${info.count}× · ${fmtVND(info.total)}`;
+                    els.recurringList.appendChild(li);
+                });
+            }
+
+            // Heatmap (contrast-aware)
+            els.heatmap.innerHTML = '';
+            const namesVI = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
+            const namesEN = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            const names = settings.lang === 'vi' ? namesVI : namesEN;
+            weekdayTotals.forEach((val, i) => {
+                const ratio = maxDay > 0 ? (val / maxDay) : 0;
+                const L = Math.round(95 - ratio * 55); // 95..40
+                const bg = `hsl(220 15% ${L}%)`;
+                const textColor = (L < 65) ? '#fff' : '#111';
+                const subColor = (L < 65) ? 'rgba(255,255,255,0.85)' : '#475569';
+                const borderColor = (L < 80) ? 'rgba(0,0,0,0.12)' : 'rgba(0,0,0,0.08)';
+
+                const cell = document.createElement('div');
+                cell.className = 'rounded-xl p-3 text-center border';
+                if (i === 6) cell.className += ' hm-sun';
+                cell.style.background = bg;
+                cell.style.borderColor = borderColor;
+
+                const day = document.createElement('div');
+                day.className = 'text-xs';
+                day.textContent = names[i];
+                day.style.color = subColor;
+
+                const value = document.createElement('div');
+                value.className = 'font-semibold';
+                value.textContent = fmtVND(val);
+                value.style.color = textColor;
+
+                if (!val) {
+                    cell.style.backgroundImage = 'repeating-linear-gradient(45deg, transparent 0 6px, rgba(0,0,0,0.04) 6px 12px)';
+                    cell.style.backgroundBlendMode = 'multiply';
+                }
+
+                cell.appendChild(day);
+                cell.appendChild(value);
+                els.heatmap.appendChild(cell);
+            });
+        }
+        // Re-render revenue to apply the fix on load
+        try { if (typeof renderRevenue === 'function') renderRevenue(); } catch (e) { /* ignore in case render() runs later */ }
+    </script>
+
+
+    <!-- === PATCH: Force native datepickers for filter inputs & simplify range parsing === -->
+    <script>
+        // Override helpers to keep native <input type="date"> for both languages
+        function setupFilterDateInputs() {
+            try {
+                const from = document.getElementById('fromDate');
+                const to = document.getElementById('toDate');
+                [from, to].forEach(el => {
+                    if (!el) return;
+                    // keep as native date input
+                    el.type = 'date';
+                    // hint browser locale (Chrome/Android respects)
+                    el.setAttribute('lang', (typeof settings !== 'undefined' && settings.lang === 'vi') ? 'vi-VN' : 'en-US');
+                    // ensure value is ISO if user had typed text previously
+                    if (el.value && !/^\d{4}-\d{2}-\d{2}$/.test(el.value)) {
+                        // try to parse simple dd/MM/yyyy or MM/dd/yyyy
+                        const v = el.value.trim();
+                        let iso = '';
+                        const m = v.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+                        if (m) {
+                            if (settings && settings.lang === 'vi') {
+                                const dd = m[1].padStart(2, '0'); const mm = m[2].padStart(2, '0'); const yyyy = m[3];
+                                iso = `${yyyy}-${mm}-${dd}`;
+                            } else {
+                                const mm = m[1].padStart(2, '0'); const dd = m[2].padStart(2, '0'); const yyyy = m[3];
+                                iso = `${yyyy}-${mm}-${dd}`;
+                            }
+                        }
+                        if (iso) el.value = iso;
+                    }
+                });
+            } catch (e) { console.warn('setupFilterDateInputs patch error:', e); }
+        }
+        // Read range directly in ISO
+        function getFilterRange() {
+            const fromEl = document.getElementById('fromDate');
+            const toEl = document.getElementById('toDate');
+            const f = (fromEl && fromEl.value) ? fromEl.value : '0000-01-01';
+            const t = (toEl && toEl.value) ? toEl.value : '9999-12-31';
+            return { from: f, to: t };
+        }
+        // Re-run setup after DOM and previous scripts loaded
+        window.addEventListener('load', () => {
+            try { setupFilterDateInputs(); } catch { }
+        });
+    </script>
+
+</body>
+
+</html>
